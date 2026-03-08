@@ -8,6 +8,7 @@ import ProjectsSection from "@/components/ProjectsSection";
 import ResumeSection from "@/components/ResumeSection";
 import ContactSection from "@/components/ContactSection";
 import ScrollToTop from "@/components/ScrollToTop";
+import AuroraBackground from "@/components/AuroraBackground";
 
 const HERO_VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260306_115329_5e00c9c5-4d69-49b7-94c3-9c31c60bb644.mp4";
@@ -24,10 +25,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative">
+      {/* Premium animated background */}
+      <AuroraBackground />
+
       <Navbar />
 
       {/* Hero with video background */}
-      <div ref={heroRef} id="home" className="relative h-screen flex flex-col overflow-hidden">
+      <div ref={heroRef} id="home" className="relative h-screen flex flex-col overflow-hidden z-[3]">
         <motion.div className="absolute inset-0 z-0" style={{ opacity: heroVideoOpacity }}>
           <video
             className="absolute inset-0 w-full h-full object-cover"
@@ -48,10 +52,14 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Sections */}
+      {/* Sections with dividers */}
+      <div className="section-divider" />
       <AboutSection />
+      <div className="section-divider" />
       <ProjectsSection />
+      <div className="section-divider" />
       <ResumeSection />
+      <div className="section-divider" />
       <ContactSection />
       <ScrollToTop />
     </div>
