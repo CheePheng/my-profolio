@@ -24,6 +24,7 @@ const ScrollFrameHero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const loadedRef = useRef<Set<number>>(new Set());
   const [ready, setReady] = useState(false);
 
   const { scrollYProgress } = useScroll({
@@ -70,6 +71,19 @@ const ScrollFrameHero = () => {
   );
   const exitOverlay = useTransform(scrollYProgress, [0.85, 1], [0, 1]);
 
+  // ─── Find nearest loaded frame ───
+  const findNearest = (target: number): number => {
+    const loaded = loadedRef.current;
+    if (loaded.has(target)) return target;
+    let lo = target - 1, hi = target + 1;
+    while (lo >= 0 || hi < FRAME_COUNT) {
+      if (lo >= 0 && loaded.has(lo)) return lo;
+      if (hi < FRAME_COUNT && loaded.has(hi)) return hi;
+      lo--; hi++;
+    }
+    return 0;
+  };
+
   // ─── CANVAS SIZING ───
   useEffect(() => {
     const resize = () => {
@@ -79,10 +93,11 @@ const ScrollFrameHero = () => {
       canvas.height = window.innerHeight;
       // Re-draw current frame after resize
       const imgs = imagesRef.current;
-      if (imgs.length > 0) {
+      if (imgs.length > 0 && loadedRef.current.size > 0) {
         const progress = scrollYProgress.get();
-        const index = Math.min(Math.floor(progress * (FRAME_COUNT - 1)), FRAME_COUNT - 1);
-        const img = imgs[index];
+        const target = Math.min(Math.floor(progress * (FRAME_COUNT - 1)), FRAME_COUNT - 1);
+        const best = findNearest(target);
+        const img = imgs[best];
         if (img?.complete) drawFrame(canvas, img);
       }
     };
@@ -91,43 +106,47 @@ const ScrollFrameHero = () => {
     return () => window.removeEventListener("resize", resize);
   }, [scrollYProgress]);
 
-  // ─── PRELOAD FRAMES ───
+  // ─── PROGRESSIVE FRAME LOADING ───
   useEffect(() => {
     const imgs: HTMLImageElement[] = [];
-    let loaded = 0;
+    for (let i = 0; i < FRAME_COUNT; i++) imgs.push(new Image());
+    imagesRef.current = imgs;
 
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      img.src = getFrameSrc(i);
+    const load = (index: number) => {
+      const img = imgs[index];
+      if (img.src) return; // already loading
       img.onload = () => {
-        loaded++;
-        // Show the first frame as soon as it arrives
-        if (loaded === 1) {
-          drawFrame(canvasRef.current, imgs[0]);
+        loadedRef.current.add(index);
+        if (index === 0) {
+          drawFrame(canvasRef.current, img);
           setReady(true);
         }
       };
-      imgs.push(img);
-    }
+      img.src = getFrameSrc(index + 1); // files are 1-indexed (00001.png)
+    };
 
-    imagesRef.current = imgs;
+    // Batch 1: key frames (every 8th) for instant scroll coverage
+    const keyFrames = [0, ...Array.from({ length: FRAME_COUNT }, (_, i) => i).filter((i) => i % 8 === 0)];
+    keyFrames.forEach(load);
+
+    // Batch 2: fill remaining frames after key frames have a head start
+    const timer = setTimeout(() => {
+      for (let i = 0; i < FRAME_COUNT; i++) load(i);
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, []);
 
-  // ─── DRAW FRAME ON SCROLL ───
+  // ─── DRAW FRAME ON SCROLL (with nearest-frame fallback) ───
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     const canvas = canvasRef.current;
     const imgs = imagesRef.current;
-    if (!canvas || imgs.length === 0) return;
+    if (!canvas || imgs.length === 0 || loadedRef.current.size === 0) return;
 
-    const index = Math.min(
-      Math.floor(progress * (FRAME_COUNT - 1)),
-      FRAME_COUNT - 1
-    );
-
-    const img = imgs[index];
-    if (!img?.complete) return;
-
-    drawFrame(canvas, img);
+    const target = Math.min(Math.floor(progress * (FRAME_COUNT - 1)), FRAME_COUNT - 1);
+    const best = findNearest(target);
+    const img = imgs[best];
+    if (img?.complete) drawFrame(canvas, img);
   });
 
   return (
