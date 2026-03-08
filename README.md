@@ -19,7 +19,7 @@ My personal portfolio site. Built to showcase projects, experience, and academic
 - Transcript viewer with download support
 - Scroll-to-top button
 
-## Getting Started
+## Wanna run it locally yourself?
 
 ```bash
 git clone https://github.com/CheePheng/cheepheng.github.io.git
@@ -28,15 +28,6 @@ npm install
 npm run dev
 ```
 
-## Deployment
-
-Deploys automatically to GitHub Pages via GitHub Actions on every push to `main`.
-
-To set it up:
-
-1. Go to your repo → Settings → Pages
-2. Set source to **GitHub Actions**
-3. Push to `main` — done
 
 ## License
 
