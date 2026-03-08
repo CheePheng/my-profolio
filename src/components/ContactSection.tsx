@@ -8,28 +8,28 @@ const ContactSection = () => {
   const orbY = useTransform(scrollYProgress, [0, 1], [80, -40]);
 
   return (
-    <section ref={ref} id="contact" className="relative py-20 px-6 md:px-16 bg-gradient-to-b from-[#10141a] to-[#0c0e14] overflow-hidden">
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-400/20 to-transparent pointer-events-none" />
-      <motion.div style={{ y: orbY }} className="absolute -top-40 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-violet-500/[0.04] rounded-full blur-3xl pointer-events-none" />
+    <section ref={ref} id="contact" className="section-premium relative py-24 px-6 md:px-16 overflow-hidden">
+      <motion.div style={{ y: orbY }} className="absolute -top-40 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-violet-500/[0.05] rounded-full blur-[150px] pointer-events-none" />
       <div className="max-w-2xl mx-auto text-center">
-        <motion.h2
-          className="text-4xl md:text-5xl font-heading italic text-white tracking-tight mb-4"
+        <motion.div
+          className="mb-10"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Get In Touch
-        </motion.h2>
-        <motion.p
-          className="text-white/50 font-body font-light mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          I'm currently open to opportunities. Feel free to reach out!
-        </motion.p>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="glow-dot" />
+            <span className="text-xs font-body font-semibold text-violet-300/70 uppercase tracking-[0.2em]">Let's Connect</span>
+            <div className="glow-dot" />
+          </div>
+          <h2 className="text-4xl md:text-5xl font-heading italic gradient-text tracking-tight mb-4">
+            Get In Touch
+          </h2>
+          <p className="text-white/40 font-body font-light">
+            I'm currently open to opportunities. Feel free to reach out!
+          </p>
+        </motion.div>
 
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
@@ -40,24 +40,24 @@ const ContactSection = () => {
         >
           <a
             href="mailto:cheephengcheepheng@outlook.com"
-            className="liquid-glass-strong rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 hover:bg-white/10 transition-colors"
+            className="premium-card rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
           >
-            <Mail className="h-5 w-5" />
+            <Mail className="h-5 w-5 text-violet-400" />
             cheephengcheepheng@outlook.com
           </a>
           <a
             href="https://github.com/CheePheng"
             target="_blank"
             rel="noopener noreferrer"
-            className="liquid-glass rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 hover:bg-white/10 transition-colors"
+            className="premium-card rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
           >
-            <Github className="h-5 w-5" />
+            <Github className="h-5 w-5 text-violet-400" />
             github.com/CheePheng
           </a>
         </motion.div>
 
         <motion.p
-          className="mt-16 text-xs text-white/30 font-body"
+          className="mt-20 text-xs text-white/20 font-body"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
