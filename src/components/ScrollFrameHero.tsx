@@ -1,13 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
 import { ArrowUpRight, Github, ChevronDown } from "lucide-react";
 import BlurText from "./BlurText";
 
-const FRAME_COUNT = 192;
-const FRAME_PATH = "/frames/";
-
-// 5-digit zero-padded: 00001.png ... 00192.png
-const frameSrc = (n: number) => `${FRAME_PATH}${String(n).padStart(5, "0")}.png`;
+const VIDEO_SRC = "/videos/hero-scroll.mp4";
 
 const scrollTo = (id: string) => {
   const el = document.getElementById(id);
@@ -16,14 +12,11 @@ const scrollTo = (id: string) => {
 
 const ScrollFrameHero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
-  const currentFrameRef = useRef(0);
   const rafRef = useRef<number>(0);
 
-  // Scroll tracking over tall container
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
@@ -32,151 +25,103 @@ const ScrollFrameHero = () => {
   /* ═══════════════════════════════════════
      TEXT TIMING (scroll progress 0 → 1)
      ═══════════════════════════════════════
-     0.00 – 0.08  Hero text fades IN
-     0.08 – 0.18  Hero text visible (cherry blossoms)
-     0.18 – 0.28  Hero text fades OUT (camera moving)
-     0.35 – 0.42  "Scroll deeper" subtle prompt
+     0.00 – 0.04  Hero text fades IN
+     0.04 – 0.18  Hero text visible (cherry blossoms)
+     0.18 – 0.28  Hero text fades OUT (camera moving to water)
+     0.32 – 0.47  "Keep scrolling" hint (water surface)
      0.50 – 0.58  Underwater text fades IN
      0.58 – 0.72  Underwater text visible (koi scene)
-     0.72 – 0.82  Underwater text fades OUT
-     0.85 – 1.00  Fade to dark → content below
+     0.72 – 0.80  Underwater text fades OUT
+     0.88 – 1.00  Fade to dark → content below
      ═══════════════════════════════════════ */
 
-  // Hero text (above water scene)
   const heroOpacity = useTransform(scrollYProgress, [0, 0.04, 0.18, 0.28], [0, 1, 1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.04, 0.28], [30, 0, -80]);
   const heroScale = useTransform(scrollYProgress, [0.18, 0.28], [1, 0.95]);
 
-  // Tech stack bar
   const techOpacity = useTransform(scrollYProgress, [0.02, 0.06, 0.16, 0.22], [0, 1, 1, 0]);
-
-  // Scroll indicator
   const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.02, 0.06, 0.1], [0, 1, 1, 0]);
-
-  // Mid-journey hint
   const midHintOpacity = useTransform(scrollYProgress, [0.32, 0.37, 0.42, 0.47], [0, 0.6, 0.6, 0]);
 
-  // Underwater text
   const underwaterOpacity = useTransform(scrollYProgress, [0.50, 0.58, 0.72, 0.80], [0, 1, 1, 0]);
   const underwaterY = useTransform(scrollYProgress, [0.50, 0.58, 0.80], [50, 0, -40]);
   const underwaterScale = useTransform(scrollYProgress, [0.50, 0.58], [0.96, 1]);
 
-  // Overall canvas darkening for atmosphere
   const overlayOpacity = useTransform(
     scrollYProgress,
     [0, 0.3, 0.45, 0.55, 0.75, 0.9, 1],
     [0, 0, 0.12, 0.18, 0.12, 0.3, 0.6]
   );
 
-  // Subtle canvas scale for depth (JeskoJets-like zoom effect)
   const canvasScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.02, 1, 1.03]);
-
-  // Final fade to dark before content
   const exitOverlay = useTransform(scrollYProgress, [0.88, 1], [0, 0.85]);
 
-  // ─── PRELOAD FRAMES ───
+  // ─── VIDEO LOADING ───
   useEffect(() => {
-    let loadedCount = 0;
-    const images: HTMLImageElement[] = [];
+    const video = videoRef.current;
+    if (!video) return;
 
-    // Load first frame immediately for instant visual
-    const firstImg = new Image();
-    firstImg.src = frameSrc(1);
-    firstImg.onload = () => {
-      images[0] = firstImg;
-      drawFrame(0);
+    const handleProgress = () => {
+      if (video.buffered.length > 0) {
+        const percent = Math.round(
+          (video.buffered.end(video.buffered.length - 1) / video.duration) * 100
+        );
+        setLoadProgress(percent);
+      }
     };
 
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      img.src = frameSrc(i);
-      img.onload = () => {
-        loadedCount++;
-        setLoadProgress(Math.round((loadedCount / FRAME_COUNT) * 100));
-        if (loadedCount === FRAME_COUNT) setLoaded(true);
-      };
-      img.onerror = () => {
-        loadedCount++;
-        setLoadProgress(Math.round((loadedCount / FRAME_COUNT) * 100));
-        if (loadedCount === FRAME_COUNT) setLoaded(true);
-      };
-      images[i - 1] = img;
+    const handleCanPlayThrough = () => {
+      setReady(true);
+      setLoadProgress(100);
+      // Set to first frame
+      video.currentTime = 0;
+    };
+
+    const handleLoadedMetadata = () => {
+      // Pause immediately — we control playback via scroll
+      video.pause();
+      video.currentTime = 0;
+    };
+
+    video.addEventListener("progress", handleProgress);
+    video.addEventListener("canplaythrough", handleCanPlayThrough);
+    video.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+    // If already loaded (cached)
+    if (video.readyState >= 4) {
+      setReady(true);
+      setLoadProgress(100);
     }
 
-    imagesRef.current = images;
-  }, []);
-
-  // ─── CANVAS RESIZE ───
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      const ctx = canvas.getContext("2d");
-      if (ctx) ctx.scale(dpr, dpr);
-      drawFrame(currentFrameRef.current);
+    return () => {
+      video.removeEventListener("progress", handleProgress);
+      video.removeEventListener("canplaythrough", handleCanPlayThrough);
+      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
     };
-
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, [loaded]);
-
-  // ─── DRAW FRAME (object-cover) ───
-  const drawFrame = useCallback((frameIndex: number) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    const img = imagesRef.current[frameIndex];
-    if (!canvas || !ctx || !img || !img.complete) return;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const cW = canvas.width / dpr;
-    const cH = canvas.height / dpr;
-    const iW = img.naturalWidth;
-    const iH = img.naturalHeight;
-
-    const scale = Math.max(cW / iW, cH / iH);
-    const drawW = iW * scale;
-    const drawH = iH * scale;
-    const x = (cW - drawW) / 2;
-    const y = (cH - drawH) / 2;
-
-    ctx.clearRect(0, 0, cW, cH);
-    ctx.drawImage(img, x, y, drawW, drawH);
   }, []);
 
-  // Draw first frame once loaded
-  useEffect(() => {
-    if (loaded) drawFrame(0);
-  }, [loaded, drawFrame]);
-
-  // ─── UPDATE FRAME ON SCROLL (with RAF for smoothness) ───
+  // ─── SCRUB VIDEO ON SCROLL ───
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const frameIndex = Math.min(
-      FRAME_COUNT - 1,
-      Math.max(0, Math.floor(progress * (FRAME_COUNT - 1)))
-    );
-    if (frameIndex !== currentFrameRef.current) {
-      currentFrameRef.current = frameIndex;
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(() => drawFrame(frameIndex));
-    }
+    const video = videoRef.current;
+    if (!video || !video.duration) return;
+
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const targetTime = progress * video.duration;
+      // Only seek if difference is meaningful (avoids jitter)
+      if (Math.abs(video.currentTime - targetTime) > 0.02) {
+        video.currentTime = targetTime;
+      }
+    });
   });
 
   return (
     <>
-      {/* Tall scrollable container — 800vh = very slow & cinematic */}
       <div ref={containerRef} style={{ height: "800vh" }}>
-        {/* Sticky viewport fills the screen */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
 
           {/* ─── LOADING SCREEN ─── */}
-          {!loaded && (
+          {!ready && (
             <div className="absolute inset-0 z-50 bg-[#07070d] flex flex-col items-center justify-center gap-5">
               <div className="relative w-56 h-[2px] bg-white/10 rounded-full overflow-hidden">
                 <div
@@ -190,12 +135,16 @@ const ScrollFrameHero = () => {
             </div>
           )}
 
-          {/* ─── CANVAS ─── */}
+          {/* ─── VIDEO (scrubbed by scroll) ─── */}
           <motion.div style={{ scale: canvasScale }} className="absolute inset-0 origin-center">
-            <canvas
-              ref={canvasRef}
-              className="absolute inset-0"
-              style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.5s ease" }}
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              src={VIDEO_SRC}
+              muted
+              playsInline
+              preload="auto"
+              style={{ opacity: ready ? 1 : 0, transition: "opacity 0.5s ease" }}
             />
           </motion.div>
 
@@ -214,12 +163,11 @@ const ScrollFrameHero = () => {
             }}
           />
 
-          {/* Vignette (always on) */}
+          {/* Vignette */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background:
-                "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%)",
+              background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%)",
             }}
           />
 
@@ -230,7 +178,6 @@ const ScrollFrameHero = () => {
             className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6"
             style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
           >
-            {/* Badge */}
             <motion.div
               className="liquid-glass rounded-full px-1 py-1 flex items-center gap-2 mb-4"
               style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.4)" }}
@@ -252,7 +199,6 @@ const ScrollFrameHero = () => {
               </span>
             </motion.div>
 
-            {/* Name */}
             <div style={{ filter: "drop-shadow(0 6px 30px rgba(0,0,0,0.6))" }}>
               <BlurText
                 text="Hi, I'm Chee Pheng"
@@ -263,7 +209,6 @@ const ScrollFrameHero = () => {
               />
             </div>
 
-            {/* Subtitle */}
             <motion.p
               className="mt-5 text-sm md:text-base max-w-xl font-body font-light leading-relaxed text-white/90"
               style={{ textShadow: "0 2px 16px rgba(0,0,0,0.7)" }}
@@ -276,7 +221,6 @@ const ScrollFrameHero = () => {
               Java, and C#.
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
               className="flex items-center gap-6 mt-6"
               initial={{ opacity: 0, y: 20 }}
@@ -299,10 +243,7 @@ const ScrollFrameHero = () => {
                 style={{ textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}
               >
                 GitHub
-                <Github
-                  className="h-4 w-4"
-                  style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.6))" }}
-                />
+                <Github className="h-4 w-4" style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.6))" }} />
               </a>
             </motion.div>
           </motion.div>
@@ -346,10 +287,7 @@ const ScrollFrameHero = () => {
               animate={{ y: [0, 6, 0] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             >
-              <ChevronDown
-                className="h-4 w-4 text-white/60"
-                style={{ filter: "drop-shadow(0 1px 4px rgba(0,0,0,0.5))" }}
-              />
+              <ChevronDown className="h-4 w-4 text-white/60" style={{ filter: "drop-shadow(0 1px 4px rgba(0,0,0,0.5))" }} />
             </motion.div>
           </motion.div>
 
@@ -401,13 +339,9 @@ const ScrollFrameHero = () => {
         </div>
       </div>
 
-      {/* Smooth transition element: sits right after the scroll container */}
       <div
         className="h-1"
-        style={{
-          background: "linear-gradient(to bottom, #07070d, transparent)",
-          marginTop: "-1px",
-        }}
+        style={{ background: "linear-gradient(to bottom, #07070d, transparent)", marginTop: "-1px" }}
       />
     </>
   );
