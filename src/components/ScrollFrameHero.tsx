@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
+// fastSeek is not in the standard TS lib — extend the type
+declare global { interface HTMLVideoElement { fastSeek?(time: number): void; } }
 import { ArrowUpRight, Github, ChevronDown } from "lucide-react";
 import BlurText from "./BlurText";
 
@@ -14,7 +16,6 @@ const ScrollFrameHero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
-  const rafRef = useRef<number>(0);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -83,14 +84,12 @@ const ScrollFrameHero = () => {
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     const video = videoRef.current;
     if (!video || !video.duration || !ready) return;
-
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      const targetTime = progress * video.duration;
-      if (Math.abs(video.currentTime - targetTime) > 0.01) {
-        video.currentTime = targetTime;
-      }
-    });
+    const targetTime = progress * video.duration;
+    if (video.fastSeek) {
+      video.fastSeek(targetTime);
+    } else {
+      video.currentTime = targetTime;
+    }
   });
 
   return (
@@ -98,6 +97,9 @@ const ScrollFrameHero = () => {
       {/* 400vh = 4 screens of scroll — cinematic but not excessive */}
       <div ref={containerRef} id="home" style={{ height: "400vh" }}>
         <div className="sticky top-0 h-screen w-full overflow-hidden">
+
+          {/* Dark background shown while video loads */}
+          <div className="absolute inset-0 bg-[#07070d]" />
 
           {/* ─── VIDEO ─── */}
           <video
@@ -107,17 +109,8 @@ const ScrollFrameHero = () => {
             muted
             playsInline
             preload="auto"
-            poster="/images/hero_bg.jpeg"
             style={{ opacity: ready ? 1 : 0, transition: "opacity 0.4s ease" }}
           />
-
-          {/* Poster fallback while video loads */}
-          {!ready && (
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url(/images/hero_bg.jpeg)" }}
-            />
-          )}
 
           {/* Atmosphere overlay */}
           <motion.div
