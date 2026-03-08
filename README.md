@@ -1,8 +1,8 @@
 # cheepheng.github.io
 
-My personal portfolio site. Built to showcase projects, experience, and academic transcripts in one place.
+My personal portfolio site — projects, education, transcripts, and contact info all in one place.
 
-**Live site:** [cheepheng.github.io](https://cheepheng.github.io)
+**🌐 Live site:** [cheepheng.github.io](https://cheepheng.github.io)
 
 ## Tech Stack
 
@@ -14,21 +14,21 @@ My personal portfolio site. Built to showcase projects, experience, and academic
 ## Features
 
 - Single-page layout with smooth scroll navigation
-- Parallax background effects
+- Video hero background with parallax effects
+- Aurora animated background with floating particles
 - Responsive design with mobile hamburger menu
 - Transcript viewer with download support
-- Scroll-to-top button
+- Premium glassmorphism UI cards
 
-## Wanna run it locally yourself?
+## Want to run it locally?
 
 ```bash
-git clone https://github.com/CheePheng/cheepheng.github.io.git
-cd cheepheng.github.io
+git clone https://github.com/CheePheng/CheePheng.github.io.git
+cd CheePheng.github.io
 npm install
 npm run dev
 ```
 
+## Deployment
 
-## License
-
-MIT
+Deploys automatically to GitHub Pages via GitHub Actions on every push to `main`.
