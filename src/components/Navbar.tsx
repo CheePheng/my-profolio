@@ -19,22 +19,35 @@ const Navbar = () => {
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 px-8 lg:px-16">
       <div className="flex items-center justify-between">
-        <img src="/images/logo.png" alt="Logo" className="h-12 w-12" />
+        <img
+          src="/images/logo.png"
+          alt="Logo"
+          className="h-12 w-12"
+          style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))" }}
+        />
 
         {/* Center nav - desktop */}
-        <div className="hidden md:flex items-center liquid-glass rounded-full px-2 py-1.5 gap-1">
+        <div
+          className="hidden md:flex items-center liquid-glass rounded-full px-2 py-1.5 gap-1"
+          style={{
+            background: "rgba(0,0,0,0.25)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
+          }}
+        >
           {navLinks.map((link) => (
             <button
               key={link}
               onClick={() => scrollTo(link.toLowerCase())}
-              className="px-3 py-2 text-sm font-medium text-foreground/90 font-body hover:text-foreground transition-colors"
+              className="px-3 py-2 text-sm font-medium text-white/90 font-body hover:text-white transition-colors"
             >
               {link}
             </button>
           ))}
           <button
             onClick={() => scrollTo("contact")}
-            className="px-3.5 py-1.5 text-sm font-medium font-body rounded-full flex items-center gap-1.5 bg-white text-black dark:bg-white dark:text-black"
+            className="px-3.5 py-1.5 text-sm font-medium font-body rounded-full flex items-center gap-1.5 bg-white text-black"
           >
             Contact Me
             <ArrowUpRight className="h-4 w-4" />
@@ -44,7 +57,7 @@ const Navbar = () => {
             className="p-2 rounded-full hover:bg-white/10 transition-colors ml-1"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Sun className="h-4 w-4 text-foreground" /> : <Moon className="h-4 w-4 text-foreground" />}
+            {theme === "dark" ? <Sun className="h-4 w-4 text-white" /> : <Moon className="h-4 w-4 text-white" />}
           </button>
         </div>
 
@@ -53,14 +66,18 @@ const Navbar = () => {
           <button
             onClick={toggleTheme}
             className="liquid-glass rounded-full p-2.5"
+            style={{ background: "rgba(0,0,0,0.25)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Sun className="h-5 w-5 text-foreground" /> : <Moon className="h-5 w-5 text-foreground" />}
+            {theme === "dark" ? <Sun className="h-5 w-5 text-white" /> : <Moon className="h-5 w-5 text-white" />}
           </button>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <button className="liquid-glass rounded-full p-2.5">
-                <Menu className="h-5 w-5 text-foreground" />
+              <button
+                className="liquid-glass rounded-full p-2.5"
+                style={{ background: "rgba(0,0,0,0.25)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
+              >
+                <Menu className="h-5 w-5 text-white" />
               </button>
             </SheetTrigger>
             <SheetContent side="right" className="bg-gray-950 border-gray-800">
