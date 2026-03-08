@@ -45,7 +45,16 @@ const Index = () => {
             <source src={HERO_VIDEO_URL} type="video/mp4" />
           </video>
         </motion.div>
-        <div className="absolute inset-0 bg-black/5 z-0" />
+
+        {/* Dark overlay for text readability — gradient darker in center where text is */}
+        <div className="absolute inset-0 z-0 bg-black/20" />
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            background: "radial-gradient(ellipse at center 45%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.05) 100%)",
+          }}
+        />
+
         <div className="relative z-10 flex flex-col h-full">
           <HeroContent />
           <PartnersBar />
