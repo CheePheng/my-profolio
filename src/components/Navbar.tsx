@@ -1,13 +1,9 @@
 import { ArrowUpRight, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useState } from "react";
+import { scrollTo } from "@/lib/scrollTo";
 
 const navLinks = ["Home", "About", "Projects", "Resume"];
-
-const scrollTo = (id: string) => {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth" });
-};
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);

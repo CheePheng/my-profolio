@@ -68,8 +68,9 @@ const ProjectsSection = () => {
               className="premium-card rounded-2xl p-6 flex flex-col gap-3 group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
             >
               <div className="flex items-start justify-between">
                 <h3 className="text-lg font-body font-semibold text-white group-hover:text-violet-200 transition-colors">

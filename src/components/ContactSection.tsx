@@ -38,22 +38,24 @@ const ContactSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <a
+          <motion.a
             href="mailto:cheephengcheepheng@outlook.com"
             className="premium-card rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
+            whileHover={{ y: -2, transition: { duration: 0.2 } }}
           >
             <Mail className="h-5 w-5 text-violet-400" />
             cheephengcheepheng@outlook.com
-          </a>
-          <a
+          </motion.a>
+          <motion.a
             href="https://github.com/CheePheng"
             target="_blank"
             rel="noopener noreferrer"
             className="premium-card rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
+            whileHover={{ y: -2, transition: { duration: 0.2 } }}
           >
             <Github className="h-5 w-5 text-violet-400" />
             github.com/CheePheng
-          </a>
+          </motion.a>
         </motion.div>
 
         <motion.p

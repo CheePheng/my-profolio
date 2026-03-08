@@ -61,13 +61,17 @@ const AboutSection = () => {
 
             <h4 className="text-xs font-body font-semibold text-violet-300/50 uppercase tracking-[0.15em] mb-4">Skills & Technologies</h4>
             <div className="flex flex-wrap gap-2">
-              {skills.map((skill) => (
-                <span
+              {skills.map((skill, i) => (
+                <motion.span
                   key={skill}
                   className="skill-tag premium-card rounded-full px-3.5 py-1.5 text-xs font-body text-white/70 border border-white/[0.06]"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.4 + i * 0.03 }}
                 >
                   {skill}
-                </span>
+                </motion.span>
               ))}
             </div>
           </motion.div>
@@ -84,7 +88,7 @@ const AboutSection = () => {
             </div>
 
             <div className="space-y-5">
-              <div className="premium-card rounded-2xl p-6">
+              <motion.div className="premium-card rounded-2xl p-6" whileHover={{ y: -2, transition: { duration: 0.2 } }}>
                 <div className="flex items-center gap-2 mb-3">
                   <Cloud className="h-4 w-4 text-violet-400" />
                   <span className="text-xs font-body text-violet-300/50 font-medium">2024 – 2025</span>
@@ -99,9 +103,9 @@ const AboutSection = () => {
                   Second Class Honours Grade 2 · Specialised in cloud architecture,
                   distributed systems, and modern DevOps practices.
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="premium-card rounded-2xl p-6">
+              <motion.div className="premium-card rounded-2xl p-6" whileHover={{ y: -2, transition: { duration: 0.2 } }}>
                 <div className="flex items-center gap-2 mb-3">
                   <Code className="h-4 w-4 text-violet-400" />
                   <span className="text-xs font-body text-violet-300/50 font-medium">2020 – 2023</span>
@@ -116,7 +120,7 @@ const AboutSection = () => {
                   Core foundation in programming, databases, networking, web development,
                   and software engineering principles.
                 </p>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>

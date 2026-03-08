@@ -62,6 +62,7 @@ const ResumeSection = () => {
               className="premium-card rounded-2xl p-6 flex items-center gap-4 w-full text-left"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -2, transition: { duration: 0.2 } }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
             >
@@ -73,22 +74,26 @@ const ResumeSection = () => {
                 <p className="text-xs font-body text-white/40 truncate">{t.title}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <a
+                <motion.a
                   href={t.viewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="premium-card rounded-full p-2.5 border border-white/[0.06] hover:border-violet-500/30 transition-all"
                   title="View"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Eye className="h-4 w-4 text-white/60" />
-                </a>
-                <a
+                </motion.a>
+                <motion.a
                   href={t.downloadUrl}
                   className="premium-card rounded-full p-2.5 border border-white/[0.06] hover:border-violet-500/30 transition-all"
                   title="Download"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Download className="h-4 w-4 text-white/60" />
-                </a>
+                </motion.a>
               </div>
             </motion.div>
           ))}

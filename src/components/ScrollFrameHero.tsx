@@ -1,20 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
-// fastSeek is not in the standard TS lib — extend the type
-declare global { interface HTMLVideoElement { fastSeek?(time: number): void; } }
 import { ArrowUpRight, Github, ChevronDown } from "lucide-react";
 import BlurText from "./BlurText";
+import { scrollTo } from "@/lib/scrollTo";
 
-const VIDEO_SRC = "/videos/hero-scroll.mp4";
+const FRAME_COUNT = 192;
+const getFrameSrc = (i: number) => `/frames/${String(i).padStart(5, "0")}.png`;
 
-const scrollTo = (id: string) => {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth" });
+/** Draw an image cover-fit into a canvas */
+const drawFrame = (canvas: HTMLCanvasElement | null, img: HTMLImageElement) => {
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  const { width: cw, height: ch } = canvas;
+  const { naturalWidth: iw, naturalHeight: ih } = img;
+  const scale = Math.max(cw / iw, ch / ih);
+  const x = (cw - iw * scale) / 2;
+  const y = (ch - ih * scale) / 2;
+  ctx.drawImage(img, x, y, iw * scale, ih * scale);
 };
 
 const ScrollFrameHero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
   const [ready, setReady] = useState(false);
 
   const { scrollYProgress } = useScroll({
@@ -34,9 +43,13 @@ const ScrollFrameHero = () => {
      0.90 – 1.00 Fade to dark → content below
      ═══════════════════════════════════════ */
 
+  // Canvas dolly-zoom — camera pulls back as you scroll
+  const canvasScale = useTransform(scrollYProgress, [0, 1], [1.15, 1.0]);
+
   // Hero text — visible from the start
   const heroOpacity = useTransform(scrollYProgress, [0, 0.30, 0.45], [1, 1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.45], [0, -80]);
+  const heroY = useTransform(scrollYProgress, [0, 0.45], [0, -120]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.30, 0.45], [1.05, 1.0, 0.95]);
 
   // Tech stack bar
   const techOpacity = useTransform(scrollYProgress, [0, 0.28, 0.40], [1, 1, 0]);
@@ -47,6 +60,7 @@ const ScrollFrameHero = () => {
   // Underwater text
   const underwaterOpacity = useTransform(scrollYProgress, [0.50, 0.60, 0.80, 0.88], [0, 1, 1, 0]);
   const underwaterY = useTransform(scrollYProgress, [0.50, 0.60], [40, 0]);
+  const underwaterScale = useTransform(scrollYProgress, [0.50, 0.60], [0.92, 1.0]);
 
   // Dark overlays
   const overlayOpacity = useTransform(
@@ -54,42 +68,66 @@ const ScrollFrameHero = () => {
     [0, 0.35, 0.50, 0.55, 0.80, 0.92],
     [0, 0, 0.15, 0.18, 0.12, 0.3]
   );
-  const exitOverlay = useTransform(scrollYProgress, [0.90, 1], [0, 0.9]);
+  const exitOverlay = useTransform(scrollYProgress, [0.85, 1], [0, 1]);
 
-  // ─── VIDEO LOADING ───
+  // ─── CANVAS SIZING ───
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const handleReady = () => {
-      video.pause();
-      video.currentTime = 0;
-      setReady(true);
+    const resize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // Re-draw current frame after resize
+      const imgs = imagesRef.current;
+      if (imgs.length > 0) {
+        const progress = scrollYProgress.get();
+        const index = Math.min(Math.floor(progress * (FRAME_COUNT - 1)), FRAME_COUNT - 1);
+        const img = imgs[index];
+        if (img?.complete) drawFrame(canvas, img);
+      }
     };
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, [scrollYProgress]);
 
-    // Try multiple events — different browsers fire different ones
-    video.addEventListener("loadeddata", handleReady);
-    video.addEventListener("canplay", handleReady);
+  // ─── PRELOAD FRAMES ───
+  useEffect(() => {
+    const imgs: HTMLImageElement[] = [];
+    let loaded = 0;
 
-    // Already loaded (cached)
-    if (video.readyState >= 2) handleReady();
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      const img = new Image();
+      img.src = getFrameSrc(i);
+      img.onload = () => {
+        loaded++;
+        // Show the first frame as soon as it arrives
+        if (loaded === 1) {
+          drawFrame(canvasRef.current, imgs[0]);
+          setReady(true);
+        }
+      };
+      imgs.push(img);
+    }
 
-    return () => {
-      video.removeEventListener("loadeddata", handleReady);
-      video.removeEventListener("canplay", handleReady);
-    };
+    imagesRef.current = imgs;
   }, []);
 
-  // ─── SCRUB VIDEO ON SCROLL ───
+  // ─── DRAW FRAME ON SCROLL ───
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const video = videoRef.current;
-    if (!video || !video.duration || !ready) return;
-    const targetTime = progress * video.duration;
-    if (video.fastSeek) {
-      video.fastSeek(targetTime);
-    } else {
-      video.currentTime = targetTime;
-    }
+    const canvas = canvasRef.current;
+    const imgs = imagesRef.current;
+    if (!canvas || imgs.length === 0) return;
+
+    const index = Math.min(
+      Math.floor(progress * (FRAME_COUNT - 1)),
+      FRAME_COUNT - 1
+    );
+
+    const img = imgs[index];
+    if (!img?.complete) return;
+
+    drawFrame(canvas, img);
   });
 
   return (
@@ -98,19 +136,17 @@ const ScrollFrameHero = () => {
       <div ref={containerRef} id="home" style={{ height: "400vh" }}>
         <div className="sticky top-0 h-screen w-full overflow-hidden">
 
-          {/* Dark background shown while video loads */}
+          {/* Dark background shown while frames load */}
           <div className="absolute inset-0 bg-[#07070d]" />
 
-          {/* ─── VIDEO ─── */}
-          <video
-            ref={videoRef}
-            className="absolute inset-0 w-full h-full object-cover"
-            src={VIDEO_SRC}
-            muted
-            playsInline
-            preload="auto"
-            style={{ opacity: ready ? 1 : 0, transition: "opacity 0.4s ease" }}
-          />
+          {/* ─── CANVAS (dolly-zoom) ─── */}
+          <motion.div className="absolute inset-0" style={{ scale: canvasScale }}>
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 w-full h-full"
+              style={{ opacity: ready ? 1 : 0, transition: "opacity 0.4s ease" }}
+            />
+          </motion.div>
 
           {/* Atmosphere overlay */}
           <motion.div
@@ -140,7 +176,7 @@ const ScrollFrameHero = () => {
               ════════════════════════════════════ */}
           <motion.div
             className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6"
-            style={{ opacity: heroOpacity, y: heroY }}
+            style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
           >
             <motion.div
               className="liquid-glass rounded-full px-1 py-1 flex items-center gap-2 mb-4"
@@ -260,7 +296,7 @@ const ScrollFrameHero = () => {
               ════════════════════════════════════ */}
           <motion.div
             className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6"
-            style={{ opacity: underwaterOpacity, y: underwaterY }}
+            style={{ opacity: underwaterOpacity, y: underwaterY, scale: underwaterScale }}
           >
             <h2
               className="text-4xl md:text-6xl lg:text-7xl font-heading italic text-white mb-5"
