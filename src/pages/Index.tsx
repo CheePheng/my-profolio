@@ -10,15 +10,15 @@ import AuroraBackground from "@/components/AuroraBackground";
 const Index = () => {
   return (
     <div className="min-h-screen relative">
-      {/* Premium animated background (behind everything) */}
+      {/* Premium animated background (behind content sections) */}
       <AuroraBackground />
 
       <Navbar />
 
-      {/* Scroll-controlled frame-by-frame hero */}
+      {/* Scroll-controlled frame-by-frame hero — immersive JeskoJets style */}
       <ScrollFrameHero />
 
-      {/* Sections */}
+      {/* Content sections */}
       <div className="section-divider" />
       <AboutSection />
       <div className="section-divider" />
