@@ -63,7 +63,7 @@ const ContactSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          © 2025 Chee Pheng Ng. Built with React, Vite & Tailwind CSS.
+          © 2026 Chee Pheng Ng. Built with React, Vite & Tailwind CSS.
         </motion.p>
       </div>
     </section>

@@ -1,9 +1,8 @@
-import { ArrowUpRight, Menu, Sun, Moon } from "lucide-react";
+import { ArrowUpRight, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useState } from "react";
-import { useTheme } from "next-themes";
 
-const navLinks = ["Home", "About", "Projects", "Resume", "Contact"];
+const navLinks = ["Home", "About", "Projects", "Resume"];
 
 const scrollTo = (id: string) => {
   const el = document.getElementById(id);
@@ -12,9 +11,6 @@ const scrollTo = (id: string) => {
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 px-8 lg:px-16">
@@ -49,28 +45,13 @@ const Navbar = () => {
             onClick={() => scrollTo("contact")}
             className="px-3.5 py-1.5 text-sm font-medium font-body rounded-full flex items-center gap-1.5 bg-white text-black"
           >
-            Contact Me
+            Contact
             <ArrowUpRight className="h-4 w-4" />
-          </button>
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-white/10 transition-colors ml-1"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4 text-white" /> : <Moon className="h-4 w-4 text-white" />}
           </button>
         </div>
 
         {/* Mobile */}
-        <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="liquid-glass rounded-full p-2.5"
-            style={{ background: "rgba(0,0,0,0.25)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="h-5 w-5 text-white" /> : <Moon className="h-5 w-5 text-white" />}
-          </button>
+        <div className="md:hidden">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
@@ -96,7 +77,7 @@ const Navbar = () => {
                   onClick={() => { scrollTo("contact"); setOpen(false); }}
                   className="mt-4 px-5 py-2.5 text-sm font-medium font-body rounded-full flex items-center gap-2 w-fit bg-white text-black"
                 >
-                  Contact Me
+                  Contact
                   <ArrowUpRight className="h-4 w-4" />
                 </button>
               </div>
