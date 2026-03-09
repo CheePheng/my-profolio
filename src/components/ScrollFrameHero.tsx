@@ -212,7 +212,7 @@ const ScrollFrameHero = () => {
             style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
           >
             <motion.div
-              className="liquid-glass rounded-full px-1 py-1 flex items-center gap-2 mb-4"
+              className="liquid-glass rounded-2xl sm:rounded-full px-3 py-2 sm:px-1 sm:py-1 flex flex-col sm:flex-row items-center gap-1 sm:gap-2 mb-4"
               style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.4)" }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -225,7 +225,7 @@ const ScrollFrameHero = () => {
                 Open to Work
               </span>
               <span
-                className="text-sm text-white pr-3 font-body font-medium"
+                className="text-xs sm:text-sm text-white sm:pr-3 font-body font-medium"
                 style={{ textShadow: "0 2px 16px rgba(0,0,0,0.7)" }}
               >
                 Cloud Computing Graduate · DkIT 2025
@@ -235,7 +235,7 @@ const ScrollFrameHero = () => {
             <div style={{ filter: "drop-shadow(0 6px 30px rgba(0,0,0,0.6))" }}>
               <BlurText
                 text="Hi, I'm Chee Pheng"
-                className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-2xl justify-center tracking-[-4px]"
+                className="text-[2.75rem] sm:text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-2xl justify-center tracking-[-2px] sm:tracking-[-4px]"
                 delay={100}
                 animateBy="words"
                 direction="bottom"
@@ -243,7 +243,7 @@ const ScrollFrameHero = () => {
             </div>
 
             <motion.p
-              className="mt-5 text-sm md:text-base max-w-xl font-body font-light leading-relaxed text-white/90"
+              className="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base max-w-[280px] sm:max-w-xl font-body font-light leading-relaxed text-white/90"
               style={{ textShadow: "0 2px 16px rgba(0,0,0,0.7)" }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -255,7 +255,7 @@ const ScrollFrameHero = () => {
             </motion.p>
 
             <motion.div
-              className="flex items-center gap-6 mt-6"
+              className="flex items-center gap-4 sm:gap-6 mt-5 sm:mt-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 1.2 }}
@@ -292,11 +292,11 @@ const ScrollFrameHero = () => {
             >
               Tech Stack
             </span>
-            <div className="flex items-center gap-6 md:gap-14 flex-wrap justify-center">
+            <div className="flex items-center gap-3 sm:gap-6 md:gap-14 flex-wrap justify-center">
               {["TypeScript", "React", "Java", "C#", "Cloud"].map((name) => (
                 <span
                   key={name}
-                  className="text-xl md:text-2xl font-heading italic text-white tracking-tight"
+                  className="text-base sm:text-xl md:text-2xl font-heading italic text-white tracking-tight"
                   style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}
                 >
                   {name}
@@ -332,7 +332,7 @@ const ScrollFrameHero = () => {
             style={{ opacity: underwaterOpacity, y: underwaterY, scale: underwaterScale }}
           >
             <h2
-              className="text-4xl md:text-6xl lg:text-7xl font-heading italic text-white mb-5"
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-heading italic text-white mb-5"
               style={{ textShadow: "0 4px 40px rgba(0,0,0,0.5)" }}
             >
               Dive into my work
