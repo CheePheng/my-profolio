@@ -161,6 +161,14 @@
   50% { transform: translate(-50px, -30px) scale(1.1); }
 }
 
+/* Reduce aurora orb sizes on mobile for GPU performance */
+@media (max-width: 768px) {
+  .aurora-orb-1 { width: 300px; height: 300px; }
+  .aurora-orb-2 { width: 250px; height: 250px; }
+  .aurora-orb-3 { width: 200px; height: 200px; }
+  .aurora-orb-4 { width: 180px; height: 180px; }
+}
+
 /* ═══════════════════════════════════════════
    NOISE TEXTURE OVERLAY
    ═══════════════════════════════════════════ */
@@ -354,4 +362,28 @@
   background: rgba(139, 92, 246, 0.15);
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
   border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE PERFORMANCE — reduce blur cost
+   ═══════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .liquid-glass {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .liquid-glass-strong {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   ACCESSIBILITY — focus-visible states
+   ═══════════════════════════════════════════ */
+
+button:focus-visible, a:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline-offset: 2px;
 }

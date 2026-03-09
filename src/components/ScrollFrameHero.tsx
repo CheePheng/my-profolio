@@ -38,6 +38,8 @@ const ScrollFrameHero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const loadedRef = useRef<Set<number>>(new Set());
+  const rafRef = useRef<number>(0);
+  const lastFrameRef = useRef<number>(-1);
   const [ready, setReady] = useState(false);
 
   const { scrollYProgress } = useScroll({
@@ -144,23 +146,34 @@ const ScrollFrameHero = () => {
     keyFrames.forEach(load);
 
     // Batch 2: fill remaining frames after key frames have a head start
+    // On mobile, skip odd frames to halve memory usage (~132MB vs ~264MB)
+    const isMobile = window.innerWidth < 768;
     const timer = setTimeout(() => {
-      for (let i = 0; i < FRAME_COUNT; i++) load(i);
+      for (let i = 0; i < FRAME_COUNT; i++) {
+        if (isMobile && i % 2 !== 0) continue;
+        load(i);
+      }
     }, 200);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // ─── DRAW FRAME ON SCROLL (with nearest-frame fallback) ───
+  // ─── DRAW FRAME ON SCROLL (throttled with rAF, skips duplicate frames) ───
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const canvas = canvasRef.current;
-    const imgs = imagesRef.current;
-    if (!canvas || imgs.length === 0 || loadedRef.current.size === 0) return;
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = 0;
+      const canvas = canvasRef.current;
+      const imgs = imagesRef.current;
+      if (!canvas || imgs.length === 0 || loadedRef.current.size === 0) return;
 
-    const target = Math.min(Math.floor(progress * (FRAME_COUNT - 1)), FRAME_COUNT - 1);
-    const best = findNearest(target);
-    const img = imgs[best];
-    if (img?.complete) drawFrame(canvas, img);
+      const target = Math.min(Math.floor(progress * (FRAME_COUNT - 1)), FRAME_COUNT - 1);
+      const best = findNearest(target);
+      if (best === lastFrameRef.current) return;
+      lastFrameRef.current = best;
+      const img = imgs[best];
+      if (img?.complete) drawFrame(canvas, img);
+    });
   });
 
   return (

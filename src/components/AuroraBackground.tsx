@@ -6,6 +6,13 @@ const AuroraBackground = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Skip particle animation on mobile — CSS aurora orbs are enough
+    if (window.innerWidth < 768) {
+      canvas.style.display = "none";
+      return;
+    }
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 

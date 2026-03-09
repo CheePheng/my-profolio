@@ -13,7 +13,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between">
         <img
           src="/images/logo.png"
-          alt="Logo"
+          alt="Chee Pheng portfolio logo"
           className="h-12 w-12"
           style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))" }}
         />
@@ -51,6 +51,7 @@ const Navbar = () => {
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
+                aria-label="Open menu"
                 className="liquid-glass rounded-full p-2.5"
                 style={{ background: "rgba(0,0,0,0.25)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
               >

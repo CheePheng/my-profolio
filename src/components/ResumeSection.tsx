@@ -79,6 +79,7 @@ const ResumeSection = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="premium-card rounded-full p-2.5 border border-white/[0.06] hover:border-violet-500/30 transition-all"
+                  aria-label="View transcript"
                   title="View"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
@@ -88,6 +89,7 @@ const ResumeSection = () => {
                 <motion.a
                   href={t.downloadUrl}
                   className="premium-card rounded-full p-2.5 border border-white/[0.06] hover:border-violet-500/30 transition-all"
+                  aria-label="Download transcript"
                   title="Download"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
