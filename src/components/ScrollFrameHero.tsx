@@ -7,16 +7,29 @@ import { scrollTo } from "@/lib/scrollTo";
 const FRAME_COUNT = 192;
 const getFrameSrc = (i: number) => `/frames/${String(i).padStart(5, "0")}.png`;
 
-/** Draw an image cover-fit into a canvas */
+/** Draw an image into a canvas — cover on desktop, blended fit on portrait mobile */
 const drawFrame = (canvas: HTMLCanvasElement | null, img: HTMLImageElement) => {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const { width: cw, height: ch } = canvas;
   const { naturalWidth: iw, naturalHeight: ih } = img;
-  const scale = Math.max(cw / iw, ch / ih);
+
+  const coverScale = Math.max(cw / iw, ch / ih);
+  const containScale = Math.min(cw / iw, ch / ih);
+  const isPortrait = ch > cw * 1.2;
+
+  // Portrait: blend 65% toward cover (show more of the scene)
+  // Landscape/desktop: pure cover
+  const scale = isPortrait
+    ? containScale + (coverScale - containScale) * 0.65
+    : coverScale;
+
   const x = (cw - iw * scale) / 2;
   const y = (ch - ih * scale) / 2;
+
+  ctx.fillStyle = "#07070d";
+  ctx.fillRect(0, 0, cw, ch);
   ctx.drawImage(img, x, y, iw * scale, ih * scale);
 };
 
@@ -45,7 +58,7 @@ const ScrollFrameHero = () => {
      ═══════════════════════════════════════ */
 
   // Canvas dolly-zoom — camera pulls back as you scroll
-  const canvasScale = useTransform(scrollYProgress, [0, 1], [1.15, 1.0]);
+  const canvasScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.0]);
 
   // Hero text — visible from the start
   const heroOpacity = useTransform(scrollYProgress, [0, 0.30, 0.45], [1, 1, 0]);
@@ -125,8 +138,9 @@ const ScrollFrameHero = () => {
       img.src = getFrameSrc(index + 1); // files are 1-indexed (00001.png)
     };
 
-    // Batch 1: key frames (every 8th) for instant scroll coverage
-    const keyFrames = [0, ...Array.from({ length: FRAME_COUNT }, (_, i) => i).filter((i) => i % 8 === 0)];
+    // Batch 1: key frames for instant scroll coverage (sparser on mobile)
+    const step = window.innerWidth < 768 ? 16 : 8;
+    const keyFrames = [0, ...Array.from({ length: FRAME_COUNT }, (_, i) => i).filter((i) => i % step === 0)];
     keyFrames.forEach(load);
 
     // Batch 2: fill remaining frames after key frames have a head start
@@ -151,8 +165,8 @@ const ScrollFrameHero = () => {
 
   return (
     <>
-      {/* 400vh = 4 screens of scroll — cinematic but not excessive */}
-      <div ref={containerRef} id="home" style={{ height: "400vh" }}>
+      {/* 250vh on mobile, 400vh on desktop */}
+      <div ref={containerRef} id="home" className="h-[250vh] md:h-[400vh]">
         <div className="sticky top-0 h-screen w-full overflow-hidden">
 
           {/* Dark background shown while frames load */}
