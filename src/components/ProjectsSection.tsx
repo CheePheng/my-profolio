@@ -35,7 +35,7 @@ const ProjectsSection = () => {
   const glowY = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
   return (
-    <section ref={ref} id="projects" className="section-premium relative py-24 px-6 md:px-16 overflow-hidden">
+    <section ref={ref} id="projects" className="section-premium relative py-16 md:py-24 px-6 md:px-16 overflow-hidden">
       <motion.div style={{ y: glowY }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-violet-500/[0.04] rounded-full blur-[150px] pointer-events-none" />
       <div className="max-w-6xl mx-auto">
         <motion.div

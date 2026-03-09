@@ -9,7 +9,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="fixed top-4 left-0 right-0 z-50 px-8 lg:px-16">
+    <nav className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-8 lg:px-16">
       <div className="flex items-center justify-between">
         <img
           src="/images/logo.png"
@@ -52,7 +52,7 @@ const Navbar = () => {
             <SheetTrigger asChild>
               <button
                 aria-label="Open menu"
-                className="liquid-glass rounded-full p-2.5"
+                className="liquid-glass rounded-full p-3"
                 style={{ background: "rgba(0,0,0,0.25)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
               >
                 <Menu className="h-5 w-5 text-white" />
@@ -65,7 +65,7 @@ const Navbar = () => {
                   <button
                     key={link}
                     onClick={() => { scrollTo(link.toLowerCase()); setOpen(false); }}
-                    className="text-left text-lg font-body text-white/90 hover:text-white transition-colors py-2"
+                    className="text-left text-lg font-body text-white/90 hover:text-white transition-colors py-3"
                   >
                     {link}
                   </button>

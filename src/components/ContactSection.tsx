@@ -8,7 +8,7 @@ const ContactSection = () => {
   const orbY = useTransform(scrollYProgress, [0, 1], [80, -40]);
 
   return (
-    <section ref={ref} id="contact" className="section-premium relative py-24 px-6 md:px-16 overflow-hidden">
+    <section ref={ref} id="contact" className="section-premium relative py-16 md:py-24 px-6 md:px-16 overflow-hidden">
       <motion.div style={{ y: orbY }} className="absolute -top-40 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-violet-500/[0.05] rounded-full blur-[150px] pointer-events-none" />
       <div className="max-w-2xl mx-auto text-center">
         <motion.div
@@ -40,20 +40,20 @@ const ContactSection = () => {
         >
           <motion.a
             href="mailto:cheephengcheepheng@outlook.com"
-            className="premium-card rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
+            className="premium-card rounded-full px-4 sm:px-6 py-3 font-body text-xs sm:text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
             whileHover={{ y: -2, transition: { duration: 0.2 } }}
           >
-            <Mail className="h-5 w-5 text-violet-400" />
+            <Mail className="h-5 w-5 text-violet-400 shrink-0" />
             cheephengcheepheng@outlook.com
           </motion.a>
           <motion.a
             href="https://github.com/CheePheng"
             target="_blank"
             rel="noopener noreferrer"
-            className="premium-card rounded-full px-6 py-3 font-body text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
+            className="premium-card rounded-full px-4 sm:px-6 py-3 font-body text-xs sm:text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
             whileHover={{ y: -2, transition: { duration: 0.2 } }}
           >
-            <Github className="h-5 w-5 text-violet-400" />
+            <Github className="h-5 w-5 text-violet-400 shrink-0" />
             github.com/CheePheng
           </motion.a>
         </motion.div>

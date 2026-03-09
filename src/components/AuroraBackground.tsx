@@ -88,8 +88,8 @@ const AuroraBackground = () => {
         style={{ opacity: 0.6 }}
         aria-hidden="true"
       />
-      {/* Noise texture overlay */}
-      <div className="noise-overlay" aria-hidden="true" />
+      {/* Noise texture overlay — hidden on mobile for GPU performance */}
+      <div className="noise-overlay hidden md:block" aria-hidden="true" />
     </>
   );
 };

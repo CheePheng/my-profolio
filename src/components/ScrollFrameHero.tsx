@@ -104,8 +104,10 @@ const ScrollFrameHero = () => {
     const resize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // Half resolution on mobile — 4x faster drawImage, CSS upscales
+      const scale = window.innerWidth < 768 ? 0.5 : 1;
+      canvas.width = Math.round(window.innerWidth * scale);
+      canvas.height = Math.round(window.innerHeight * scale);
       // Re-draw current frame after resize
       const imgs = imagesRef.current;
       if (imgs.length > 0 && loadedRef.current.size > 0) {
@@ -131,10 +133,18 @@ const ScrollFrameHero = () => {
       const img = imgs[index];
       if (img.src) return; // already loading
       img.onload = () => {
-        loadedRef.current.add(index);
-        if (index === 0) {
-          drawFrame(canvasRef.current, img);
-          setReady(true);
+        // Decode off main thread to avoid jank on first drawImage
+        const markReady = () => {
+          loadedRef.current.add(index);
+          if (index === 0) {
+            drawFrame(canvasRef.current, img);
+            setReady(true);
+          }
+        };
+        if (img.decode) {
+          img.decode().then(markReady).catch(markReady);
+        } else {
+          markReady();
         }
       };
       img.src = getFrameSrc(index + 1); // files are 1-indexed (00001.png)

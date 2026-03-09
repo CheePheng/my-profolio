@@ -15,7 +15,7 @@ const AboutSection = () => {
   const orbY2 = useTransform(scrollYProgress, [0, 1], [-40, 80]);
 
   return (
-    <section ref={ref} id="about" className="section-premium dot-grid relative py-24 px-6 md:px-16 overflow-hidden">
+    <section ref={ref} id="about" className="section-premium dot-grid relative py-16 md:py-24 px-6 md:px-16 overflow-hidden">
       <motion.div style={{ y: orbY1 }} className="absolute -top-32 -left-32 w-96 h-96 bg-indigo-500/[0.07] rounded-full blur-[120px] pointer-events-none" />
       <motion.div style={{ y: orbY2 }} className="absolute bottom-0 right-0 w-72 h-72 bg-violet-500/[0.06] rounded-full blur-[100px] pointer-events-none" />
       <div className="max-w-6xl mx-auto">
@@ -93,7 +93,7 @@ const AboutSection = () => {
                   <Cloud className="h-4 w-4 text-violet-400" />
                   <span className="text-xs font-body text-violet-300/50 font-medium">2024 – 2025</span>
                 </div>
-                <h4 className="text-lg font-body font-semibold text-white mb-1">
+                <h4 className="text-base sm:text-lg font-body font-semibold text-white mb-1">
                   BSc (Honours) Level 8 — Computing in Cloud Computing
                 </h4>
                 <p className="text-sm font-body text-white/50 mb-3">
@@ -110,7 +110,7 @@ const AboutSection = () => {
                   <Code className="h-4 w-4 text-violet-400" />
                   <span className="text-xs font-body text-violet-300/50 font-medium">2020 – 2023</span>
                 </div>
-                <h4 className="text-lg font-body font-semibold text-white mb-1">
+                <h4 className="text-base sm:text-lg font-body font-semibold text-white mb-1">
                   BSc Computer Science — Software Development
                 </h4>
                 <p className="text-sm font-body text-white/50 mb-3">
