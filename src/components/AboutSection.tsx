@@ -8,6 +8,14 @@ const skills = [
   "Node.js", "IoT", "Agile", "Docker",
 ];
 
+const skillColors: Record<string, string> = {
+  TypeScript: "bg-blue-400", React: "bg-cyan-400", Java: "bg-orange-400",
+  "C#": "bg-purple-400", "HTML/CSS": "bg-red-400", SQL: "bg-yellow-400",
+  "Cloud Architecture": "bg-violet-400", "Mobile Development": "bg-green-400",
+  "REST APIs": "bg-blue-400", Git: "bg-orange-400",
+  "Node.js": "bg-green-400", IoT: "bg-cyan-400", Agile: "bg-violet-400", Docker: "bg-blue-400",
+};
+
 const AboutSection = () => {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
@@ -64,12 +72,13 @@ const AboutSection = () => {
               {skills.map((skill, i) => (
                 <motion.span
                   key={skill}
-                  className="skill-tag premium-card rounded-full px-3.5 py-1.5 text-xs font-body text-white/70 border border-white/[0.06]"
+                  className="skill-tag premium-card rounded-full px-3.5 py-1.5 text-xs font-body text-white/70 border border-white/[0.06] flex items-center gap-2"
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: 0.4 + i * 0.03 }}
                 >
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${skillColors[skill] || "bg-white/40"}`} />
                   {skill}
                 </motion.span>
               ))}
@@ -88,7 +97,7 @@ const AboutSection = () => {
             </div>
 
             <div className="space-y-5">
-              <motion.div className="premium-card rounded-2xl p-6" whileHover={{ y: -2, transition: { duration: 0.2 } }}>
+              <motion.div className="premium-card rounded-2xl p-6 border-l-2 border-violet-500/20" whileHover={{ y: -2, transition: { duration: 0.2 } }}>
                 <div className="flex items-center gap-2 mb-3">
                   <Cloud className="h-4 w-4 text-violet-400" />
                   <span className="text-xs font-body text-violet-300/50 font-medium">2024 – 2025</span>
@@ -105,7 +114,7 @@ const AboutSection = () => {
                 </p>
               </motion.div>
 
-              <motion.div className="premium-card rounded-2xl p-6" whileHover={{ y: -2, transition: { duration: 0.2 } }}>
+              <motion.div className="premium-card rounded-2xl p-6 border-l-2 border-violet-500/20" whileHover={{ y: -2, transition: { duration: 0.2 } }}>
                 <div className="flex items-center gap-2 mb-3">
                   <Code className="h-4 w-4 text-violet-400" />
                   <span className="text-xs font-body text-violet-300/50 font-medium">2020 – 2023</span>

@@ -5,7 +5,7 @@ import BlurText from "./BlurText";
 import { scrollTo } from "@/lib/scrollTo";
 
 const FRAME_COUNT = 192;
-const getFrameSrc = (i: number) => `/frames/${String(i).padStart(5, "0")}.png`;
+const getFrameSrc = (i: number) => `/frames/${String(i).padStart(5, "0")}.webp`;
 
 /** Draw an image into a canvas — cover on desktop, blended fit on portrait mobile */
 const drawFrame = (canvas: HTMLCanvasElement | null, img: HTMLImageElement) => {
@@ -189,7 +189,7 @@ const ScrollFrameHero = () => {
   return (
     <>
       {/* 250vh on mobile, 400vh on desktop */}
-      <div ref={containerRef} id="home" className="h-[250vh] md:h-[400vh]">
+      <div ref={containerRef} id="home" className="h-[180vh] md:h-[400vh]">
         <div className="sticky top-0 h-screen w-full overflow-hidden">
 
           {/* Dark background shown while frames load */}

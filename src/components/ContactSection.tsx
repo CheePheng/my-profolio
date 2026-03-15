@@ -40,10 +40,11 @@ const ContactSection = () => {
         >
           <motion.a
             href="mailto:cheephengcheepheng@outlook.com"
-            className="premium-card rounded-full px-4 sm:px-6 py-3 font-body text-xs sm:text-sm font-medium text-white flex items-center gap-3 border border-white/[0.06] hover:border-violet-500/30 transition-all"
+            className="rounded-full px-6 sm:px-8 py-3 sm:py-4 font-body text-xs sm:text-sm font-semibold text-white flex items-center gap-3 bg-violet-600 hover:bg-violet-500 transition-all"
+            style={{ boxShadow: "0 0 30px rgba(139,92,246,0.3), 0 4px 20px rgba(0,0,0,0.3)" }}
             whileHover={{ y: -2, transition: { duration: 0.2 } }}
           >
-            <Mail className="h-5 w-5 text-violet-400 shrink-0" />
+            <Mail className="h-5 w-5 text-white shrink-0" />
             cheephengcheepheng@outlook.com
           </motion.a>
           <motion.a
@@ -58,15 +59,17 @@ const ContactSection = () => {
           </motion.a>
         </motion.div>
 
-        <motion.p
-          className="mt-20 text-xs text-white/20 font-body"
+        <motion.div
+          className="mt-16 pt-8 border-t border-white/[0.06]"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          © 2026 Chee Pheng Ng. Built with React, Vite & Tailwind CSS.
-        </motion.p>
+          <p className="text-xs text-white/20 font-body">
+            © 2026 Chee Pheng Ng · Built with React, Vite & Tailwind CSS
+          </p>
+        </motion.div>
       </div>
     </section>
   );

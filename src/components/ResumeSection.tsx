@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import { Download, FileText, Eye } from "lucide-react";
+import { Download, Eye } from "lucide-react";
 
 const transcripts = [
   {
@@ -59,18 +59,18 @@ const ResumeSection = () => {
           {transcripts.map((t, i) => (
             <motion.div
               key={t.label}
-              className="premium-card rounded-2xl p-4 sm:p-6 flex items-center gap-3 sm:gap-4 w-full text-left"
+              className="premium-card rounded-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-5 w-full text-left border-l-2 border-violet-500/30"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ y: -2, transition: { duration: 0.2 } }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
             >
-              <div className="shrink-0 w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-violet-400" />
+              <div className="shrink-0 flex flex-col items-center min-w-[3rem]">
+                <span className="text-2xl font-heading italic text-violet-400">{t.year}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-body font-semibold text-white">{t.label}</p>
+                <p className="text-sm sm:text-base font-body font-semibold text-white">{t.label}</p>
                 <p className="text-xs font-body text-white/40 truncate hidden sm:block">{t.title}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">

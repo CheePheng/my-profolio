@@ -65,17 +65,27 @@ const ProjectsSection = () => {
               href={`https://github.com/CheePheng/${project.repo}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="premium-card rounded-2xl p-6 flex flex-col gap-3 group"
+              className={`premium-card rounded-2xl p-6 flex flex-col gap-3 group relative ${i < 2 ? "border border-violet-500/15" : ""}`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ y: -2, transition: { duration: 0.2 } }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
             >
+              <span className="absolute top-4 right-5 text-4xl font-heading italic text-white/[0.04] select-none pointer-events-none">
+                {String(i + 1).padStart(2, "0")}
+              </span>
               <div className="flex items-start justify-between">
-                <h3 className="text-lg font-body font-semibold text-white group-hover:text-violet-200 transition-colors">
-                  {project.name}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-body font-semibold text-white group-hover:text-violet-200 transition-colors">
+                    {project.name}
+                  </h3>
+                  {i < 2 && (
+                    <span className="text-[10px] font-body font-semibold uppercase tracking-wider text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-full px-2.5 py-0.5">
+                      Featured
+                    </span>
+                  )}
+                </div>
                 <ArrowUpRight className="h-4 w-4 text-white/20 group-hover:text-violet-300 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0 mt-1" />
               </div>
               <p className="text-sm font-body text-white/40 leading-relaxed flex-1">
